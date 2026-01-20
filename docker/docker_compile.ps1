@@ -11,14 +11,24 @@ if (-not $imageExists) {
     docker build -t oep-latex -f "$dockerfile" .
 }
 
+if (-not (Test-Path "bin")) {
+    New-Item -ItemType Directory -Path "bin" | Out-Null
+}
+
 Write-Host "Image installed."
 Write-Host "Compiling tex source files..."
-docker run --rm -v "${projectRoot}:/doc" oep-latex pdflatex -shell-escape -synctex=1 oep1.tex
-docker run --rm -v "${projectRoot}:/doc" oep-latex pdflatex -shell-escape -synctex=1 oep1.tex
+docker run --rm -v "${projectRoot}:/doc" oep-latex pdflatex -shell-escape -synctex=1 -output-directory=bin -jobname=oop-handbook main.tex
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Compilation failed"
+    Pop-Location
+    exit 1
+}
+
+docker run --rm -v "${projectRoot}:/doc" oep-latex pdflatex -shell-escape -synctex=1 -output-directory=bin -jobname=oop-handbook main.tex
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "Done: oep1.pdf"
-    if ($o) { Start-Process oep1.pdf }
+    Write-Host "Done: bin/oop-handbook.pdf"
+    if ($o) { Start-Process "bin/oop-handbook.pdf" }
 }
 
 Pop-Location

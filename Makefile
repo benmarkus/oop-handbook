@@ -1,16 +1,19 @@
 TEX = pdflatex
-FLAGS = -shell-escape -synctex=1
-TARGET = oep1
+FLAGS = -shell-escape -synctex=1 -output-directory=bin
+SOURCE = main
+OUTPUT = oop-handbook
+OUTDIR = bin
 
-all: $(TARGET).pdf
+all: $(OUTDIR)/$(OUTPUT).pdf
 
-$(TARGET).pdf: $(TARGET).tex
+$(OUTDIR)/$(OUTPUT).pdf: $(SOURCE).tex | $(OUTDIR)
 	@command -v pygmentize >/dev/null 2>&1 || { echo "Pygments not found. Install with: pip install Pygments"; exit 1; }
-	$(TEX) $(FLAGS) $(TARGET).tex
-	$(TEX) $(FLAGS) $(TARGET).tex
+	$(TEX) $(FLAGS) -jobname=$(OUTPUT) $(SOURCE).tex && $(TEX) $(FLAGS) -jobname=$(OUTPUT) $(SOURCE).tex
+
+$(OUTDIR):
+	mkdir -p $(OUTDIR)
 
 clean:
-	rm -f *.aux *.log *.out *.toc *.listing *.synctex.gz
-	rm -rf _minted
+	rm -rf $(OUTDIR)
 
 .PHONY: all clean
