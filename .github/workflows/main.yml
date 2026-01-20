@@ -2,8 +2,8 @@ name: Compile LaTeX
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   build:
