@@ -17,8 +17,7 @@ jobs:
       - name: Compile LaTeX
         run: make
 
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: oop-handbook
-          path: bin/oop-handbook.pdf
+          files: bin/oop-handbook.pdf
