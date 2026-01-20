@@ -1,0 +1,53 @@
+\section{Bevezető}
+\noindent
+
+Az első féléves kurzusokon megismerkedtetek a funkcionális programozással (Haskell), illetve a hallgattatok olyan kurzusokat, ahol más, ismerősebb nyelveket használtatok (Shellscript, C, C\#).
+
+\bigskip
+Nyilván mindenki emlékszik, hogy a Haskell (egy funkcionális nyelv) erős megkötéseket helyezett ránk a nyelv az eszköztárat illetően. Nem voltak mellékhatások, nem deklarálhattunk a megszokott módon segédváltozókat, nem printelhettünk hibákat az egyes végrehajtások debuggolására, nem konvencionális módokon kellett ciklusokat definiálnunk.
+
+\bigskip
+A Számítógépes rendszerek, Programozási alapok és Imperatív programozás tárgyakon megismert és használt nyelvek esetében nem érezhettünk ilyen nehézségeket, itt a szintaxist és a nyelvi sajátosságokat (pl.\ pointer-műveletek) kellett elsajátítani.
+
+\subsection{Programozási paradigmák}
+\noindent
+
+A nagy eltérést a két csoport között az adhatta, hogy a két csoport különböző \textbf{programozási paradigmát} valósított meg. A Haskell a funkcionális paradigmát (amelynek tulajdonságait a tárgyon megtanulhattátok) szigorúan követő nyelv, a másik 3 nyelvet pedig leginkább imperatív, azon belül pedig a procedurális paradigma szerint írtuk.
+
+\bigskip
+Fontos a \textbf{``leginkább \ldots szerint írtuk''} megfogalmazás, mivel a pl.\ C\# esetében látni fogjuk, hogy nem kizárólag procedurális paradigmát támogató nyelv. Valóban, a legtöbb programozási nyelv \textbf{nem szigorúan egy programozási paradigmát követ} (ezáltal megkötéseket helyezve a programozóra), hanem multiparadigmás, ezáltal többféle eszközt biztosítva a fejlesztőnek.
+
+\bigskip
+Végső soron ezek a paradigmák (relatíve) magas-szintű tulajdonságai az adott programozási nyelvnek. A paradigma meghatározhatja, hogy milyen szintaxist használhatunk, vagy akár azt, hogy az általunk leírt szintaxist a végül a compiler milyen végrehajtásra fordítja.
+
+
+\subsection{Egy példa a multiparadigmás jellegre}
+\noindent
+
+Bár elemeiben egyelőre túlmutató lehet, tekintsük az alábbi kódrészletet C\#-ban:
+% chktex-file 36
+% chktex-file 18
+% chktex-file 26
+\begin{csharpblock}
+public record ImmutableOrder(Guid Id, string Status);
+
+public async Task ApproveOrder(ImmutableOrder order) {
+    var approvedOrder = Approve(order);
+    _dbContext.Update(approvedOrder);
+    await _dbContext.SaveChangesAsync();
+}
+
+public ImmutableOrder Approve(ImmutableOrder order) =>
+    order.Status == "Pending" ? order with { Status = "Approved" }
+    : throw new InvalidOperationException("Order cannot be approved.");
+\end{csharpblock}
+A kódban egy aszinkron végrehajtást látunk, az \code{ApproveOrder} lényegében annyit csinál, hogy az adatbázisban átállítja az \code{Order}-t \code{Approved}-ra.
+Ez a kódrészlet megfelel a funkcionális paradigma feltételeinek. A \code{record} beépített módon megváltoztathatatlan (natively immutable) C\#-ban, tehát nem lehet megváltoztatni a Status-át, így az Approve egy meglévő ImmutableOrder-ből létrehoz egy új ImmutableOrdert, amit a program az EF Core ORM (nem része a tárgynak) segítségével elment az adatbázisban.
+
+\bigskip
+Egy praktikus problémát old meg? Igen. Hatékony? Nem. Olvasható a többi programozó számára? Erősen kétlem. Minden létező kódbázist így kellene szervezni? Nem. De lehetséges.
+
+\subsection{A kurzus célja}
+\noindent
+
+A kurzus célja az, hogy a hallgató megismerkedjen az \textbf{objektumelvű programozási paradigma} elem\-zési, ter\-vezési, meg\-valósítási és tesztelési aspektusaival, ismerje és használja az objektumelvű programozás univerzális nyelveként használt \textbf{UML diagramok} lehetőségeit, tudja ezeket önállóan \textbf{előállítani}, illetve tudjon \textbf{UML diagramok alapján objektumelvű kódot írni C\#\ nyelven.}

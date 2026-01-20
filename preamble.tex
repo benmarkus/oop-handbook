@@ -1,0 +1,28 @@
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{lipsum}
+\usepackage{listings}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+
+% custom package
+\usepackage{benmarkus-oep}
+
+%%% OVERRIDES
+
+\renewcommand{\headrulewidth}{.4mm}
+\renewcommand{\footrulewidth}{.4mm}
+\renewcommand{\contentsname}{Tartalomjegyzék}
+\renewcommand{\thesection}{\Roman{section}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhfoffset[L]{1cm}
+\fancyhfoffset[R]{1cm}
+\rhead{\bfseries Márkus Bence}
+\lhead{Objektumelvű programozás}
+\lfoot{\leftmark}
+\rfoot{\thepage}

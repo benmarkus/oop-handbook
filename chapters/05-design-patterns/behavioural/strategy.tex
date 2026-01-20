@@ -1,0 +1,150 @@
+\subsubsection{Strategy}
+
+\paragraph{A probléma}
+\indent
+\bigskip
+
+Vegyük az alábbi kiinduló helyzetet.
+
+\bigskip
+\begin{tikzpicture}
+	\begin{class}[text width=8.5cm]{MonopolyPlayer}{0, 0}
+		\attribute{- name : string \{get;\}}
+
+		\operation{+ MonopolyPlayer(n : string, b : Behaviour)}
+		\operation{+ takeAction() : void}
+	 \end{class}
+
+	\begin{enum}[text width=5cm]{Behaviour}{9, 0}
+		\attribute{Aggressive}
+		\attribute{Tactical}
+		\attribute{Balanced}
+	\end{enum}
+
+	\composition{MonopolyPlayer}{behav}{1..1}{Behaviour}
+\end{tikzpicture}
+\bigskip
+\noindent
+
+A fenti UML diagram azt modellezzi, hogy a népszerű Monopoly egy digitális implementációjában hogyan nézhetne ki az a belső logika, ami alapján bizonyos szituációkban egy adott játékos (praktikusan ezek mondjuk a botok lennének)  meghozza a döntését, kvázi egy primitív AI\@. Kódban megvalósítva:
+
+\begin{csharpblock}
+public class MonopolyPlayer
+{
+	private string name { get; }
+	private Behaviour behav;
+
+	public MonopolyPlayer(string n, Behaviour b) {
+		this.name = n;
+		this.behav = b;
+	}
+
+	public void takeAction() {
+		if (this.behav == Behaviour.Aggressive) {
+			// do something
+		} else if (this.behav == Behaviour.Tactical) {
+			// do something
+		} else if (this.behav == Behaviour.Balanced) {
+			// do something
+		}
+	}
+}
+\end{csharpblock}
+
+\noindent
+
+A fenti implementáció nem helytelen, viszont vannak gyengeségei. Mi történik, ha kiegészítjük a \code{Behaviour} enum-ot egy negyedik, \code{Stingy} viselkedéssel? Ebben az esetben a \code{takeAction()} metódus parciális lesz a \code{Behaviour}-re, és \code{Stingy} esetén nem történik semmi.
+
+\bigskip
+
+A compiler nem fog hibát dobni erre, hiszen miért is tenné? Sehol nem keletkezett hibás kód. Az igazi szépsége ennek a hipotetikus esetnek az, hogy futásidejű hiba sem fog keletkezni (kivéve, ha esetleg definiálunk egy default ágat a végén, ami valamilyen \code{Exception}-t dob), és amikor az alkalmazásunk nem felel meg az általunk elvárt viselkedésnek, akkor semmilyen támpontot nem kapunk a hiba forrására.
+
+\newpage
+\paragraph{A megoldás}
+\noindent
+\bigskip
+
+Használjunk Strategy tervezési mintát. Ekkor az UML-ünk így módosul:
+
+\bigskip
+\begin{tikzpicture}
+	\begin{class}[text width=8.5cm]{MonopolyPlayer}{4, 0}
+		\attribute{- name : string \{get;\}}
+
+		\operation{+ MonopolyPlayer(n : string, b : Behaviour)}
+		\operation{+ takeAction() : void}
+	 \end{class}
+
+	\begin{abstractclass}[text width=4.5cm]{Behaviour}{4, -4}
+		\operation{+ execute(): void}
+	\end{abstractclass}
+
+	\begin{class}[text width=5.5cm]{Aggressive}{-1, -7}
+		\implement{Behaviour}
+		\operation{+ execute(): void \{override;\}}
+	\end{class}
+
+	\begin{class}[text width=5.5cm]{Tactical}{4, -9}
+		\implement{Behaviour}
+		\operation{+ execute(): void \{override;\}}
+	\end{class}
+
+	\begin{class}[text width=5.5cm]{Balanced}{8, -7}
+		\implement{Behaviour}
+		\operation{+ execute(): void \{override;\}}
+	\end{class}
+
+	\composition{MonopolyPlayer}{behav}{1..1}{Behaviour}
+\end{tikzpicture}
+\bigskip
+\noindent
+
+A \code{takeAction()} metódus helyén maradt, a korábban enum osztályként megvalósított \code{Behaviour} egy absztrakt osztállyá változott, amit az egyes konkrét implementációk megvalósítanak. Ennek az absztrakt osztálynak van egy \code{execute()} metódusa, ami az egyes implementációkban felülírásra kerül. Ez a metódus hordozza majd azt a viselkedést, amit elvárunk a \code{Behaviour}-től. Tekinstük az ehhez tartozó kódot:
+
+% chktex-file 11
+\begin{csharpblock}
+//Behaviour.cs
+
+public abstract class Behaviour
+{
+	public abstract void execute();
+}
+
+public class Aggressive : Behaviour
+{
+	public override void execute() {
+		//do something
+	}
+}
+
+public class Tactical : Behaviour
+{
+	public override void execute() {
+		//do something
+	}
+}
+
+...
+\end{csharpblock}
+
+\begin{csharpblock}
+//MonopolyPlayer.cs
+
+public class MonopolyPlayer
+{
+	private string name { get; }
+	private Behaviour behav;
+
+	public MonopolyPlayer(string n, Behaviour b) {
+		this.name = n;
+		this.behav = b;
+	}
+
+	public void takeAction() {
+		this.behav.execute();
+	}
+}
+\end{csharpblock}
+\noindent
+
+A \code{MonopolyPlayer} kódképe ránézésre is sokkal ízlésesebb lett. Gondoljuk végig ebben az esetben mi történik, ha a korábban említett \code{Stingy}-t be akarjuk vezetni. Ennek eléréséhez a \code{MonopolyPlayer} kódjához nem is kell hozzányúlni, csak le kell származtatni egy új osztályt a \code{Behaviour}-ből. Amikor ezt megtesszük, a compiler szólni fog, ha nem definiáltuk felül az \code{execute()} metódust, és fordítási hibát fog dobni, ha mégis megpróbáljuk ezt elmúlasztani.

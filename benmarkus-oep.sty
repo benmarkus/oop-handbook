@@ -1,0 +1,42 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{benmarkus-oep}[2026/01/19 ELTE-OOP course custom package]
+
+% Required packages
+\RequirePackage{pgf-umlcd}
+\RequirePackage{minted}
+\RequirePackage{xcolor}
+\RequirePackage{tcolorbox}
+\tcbuselibrary{listings, minted, skins}
+\RequirePackage{zi4}
+
+\tikzstyle{umlcd style enum}=[rectangle split, rectangle split parts=2,
+every text node part/.style={text centered},
+draw, minimum height=2em, umlcolor, minimum width=2cm, text width=4cm,
+minimum height=1cm, node distance=2cm]
+\makeatletter
+\newenvironment{enum}[3][]%
+{
+\begin{pgfumlcd@classAndInterfaceCommon}{#1}{#2}{#3}
+}%
+{\node[umlcd style enum, anchor=north] (\pgfumlcd@ClassName) at (\pgfumlcd@ClassPos)
+    {$<<$enum$>>$ \\ \textbf{\pgfumlcd@ClassName}
+\nodepart{second}
+\pgfumlcd@ClassAttributes};
+\end{pgfumlcd@classAndInterfaceCommon}
+}
+\makeatother
+
+\definecolor{inline}{RGB}{204,120,50}
+\definecolor{jbbg}{RGB}{43,43,43}
+
+\tcbset{listing engine=minted}
+
+\newtcblisting{csharpblock}{listing only, minted language=csharp, minted style=monokai,
+    colback=jbbg, enhanced, frame hidden, minted options={fontfamily=zi4,
+    fontsize=\footnotesize, tabsize=2, breaklines, autogobble}}
+
+\setminted[csharp]{bgcolor=jbbg, fontfamily=zi4, fontsize=\footnotesize}
+
+\newcommand{\code}[1]{\textbf{\texttt{\color{inline}#1}}}
+
+\endinput

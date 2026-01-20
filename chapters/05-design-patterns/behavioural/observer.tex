@@ -1,0 +1,140 @@
+\subsubsection{Observer}
+
+\paragraph{A probléma}
+\indent
+\bigskip
+
+Egy játékban különböző rendszereket (achievement tracker, stats, quest log, UI) működtetünk. Nézzük az alábbi implementációt:
+
+% chktex-file 12
+\begin{csharpblock}
+public class Player
+{
+    private AchievementTracker achievements;
+    private Statistics stats;
+    private QuestLog questLog;
+    private GameUI ui;
+
+    public void KillEnemy(Enemy enemy)
+    {
+        enemy.Die();
+
+        // Manuálisan értesítünk minden rendszert
+        achievements.CheckEnemyKilled(enemy);
+        stats.IncrementKills();
+        questLog.UpdateProgress("kill_enemies", 1);
+        ui.UpdateKillCounter();
+
+        // Ha új feature-t akarunk (pl. hangeffekt),
+        // módosítani kell ezt a metódust!
+    }
+
+    public void CollectItem(Item item)
+    {
+        inventory.Add(item);
+        achievements.CheckItemCollected(item);
+        stats.IncrementItemsCollected();
+        questLog.UpdateProgress("collect_items", 1);
+        ui.UpdateInventoryDisplay();
+        // Újabb szoros kapcsolat...
+    }
+}
+\end{csharpblock}
+\noindent
+Szedjük össze, milyen problémákat vélünk felfedezni. Az első és legsúlyosabb dolog az, hogy valamiért a \code{Player} osztály tartalmazza az összes tracking rendszert és UI-t. Ennek semmi értelme nincs, a játékosnak nem része egyik sem. Emiatt új funkció hozzáadása nem csak a funkció megvalósítását igényli, hanem a \code{Player} osztály módosítását is. Ez sérti az \textbf{Open/Closed Principle}-t.
+\bigskip
+
+\begin{csharpblock}
+// Konkrét megfigyelők
+public class AchievementTracker : IGameEventObserver
+{
+    public void OnEnemyKilled(Enemy enemy)
+    {
+        CheckAchievement("first_kill");
+        if (enemy.IsBoss) CheckAchievement("boss_slayer");
+    }
+
+    public void OnItemCollected(Item item) { /* ... */ }
+}
+
+public class Statistics : IGameEventObserver
+{
+    private int totalKills = 0;
+
+    public void OnEnemyKilled(Enemy enemy)
+    {
+        totalKills++;
+    }
+
+    public void OnItemCollected(Item item) { /* ... */ }
+}
+
+public class SoundSystem : IGameEventObserver
+{
+    public void OnEnemyKilled(Enemy enemy)
+    {
+        PlaySound("enemy_death.wav");
+    }
+
+    public void OnItemCollected(Item item) { /* ... */ }
+}
+\end{csharpblock}
+
+\begin{csharpblock}
+// Observer interfész
+public interface IGameEventObserver
+{
+    void OnEnemyKilled(Enemy enemy);
+    void OnItemCollected(Item item);
+}
+
+// Subject (megfigyelt objektum)
+public class Player
+{
+    private List<IGameEventObserver> observers = new();
+
+    public void Subscribe(IGameEventObserver observer)
+    {
+        observers.Add(observer);
+    }
+
+    public void Unsubscribe(IGameEventObserver observer)
+    {
+        observers.Remove(observer);
+    }
+
+    private void NotifyEnemyKilled(Enemy enemy)
+    {
+        foreach (var observer in observers)
+            observer.OnEnemyKilled(enemy);
+    }
+
+    public void KillEnemy(Enemy enemy)
+    {
+        enemy.Die();
+        NotifyEnemyKilled(enemy); // Egyszerű értesítés
+    }
+
+    public void CollectItem(Item item)
+    {
+        inventory.Add(item);
+        NotifyItemCollected(item); // Egyszerű értesítés
+    }
+}
+
+
+// Használat
+var player = new Player();
+player.Subscribe(new AchievementTracker());
+player.Subscribe(new Statistics());
+player.Subscribe(new SoundSystem()); // Új funkció Player módosítása nélkül!
+\end{csharpblock}
+
+\bigskip
+\textbf{Előnyök:}
+\begin{itemize}
+    \item \textbf{Decoupling:} A Player nem ismeri a konkrét megfigyelőket
+    \item \textbf{Extensibility:} Új megfigyelő hozzáadása a Player módosítása nélkül
+    \item \textbf{Single Responsibility:} Minden rendszer saját felelősséggel rendelkezik
+    \item \textbf{Testability:} Könnyen tesztelhető minden komponens külön-külön
+\end{itemize}

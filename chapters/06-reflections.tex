@@ -1,0 +1,43 @@
+\section{Reflexió az OOP-ra}
+\subsection{Az OOP hátrányai}
+\noindent
+
+Az OOP a szoftver emberi oldalán nyújt(hat) hatalmas előnyöket. Ennek sajnos megvan az ára.
+Az OOP extra költséggel jár. Ez akkor is igaz, ha nem vesszük figyelembe a nyelvspecifikus overheadet (pl.\ Java esetében a JVM, coldstartoknál kifejezetten gyengén teljesít a Java).
+
+\subsubsection{A futásidejű polimorfizmus ára (Dynamic Dispatch)}
+
+\subsubsection{Szemetelés}
+\noindent
+
+Egy objektumelvű program szemetel. Rengeteg objektumlétrehozás megy végbe, amit a nyelv beépített szemétgyűjtője (Garbage Collector) valamilyen módon feltakarít. Esetenként mégtöbb extra szemétgenerálást okozhatunk, ha nem ismerjük a nyelv mögötti működést. Vegyünk például egy praktikus esetet:
+
+\bigskip
+Van egy message-queue rendszer, ami másodpercenként rengeteg stringet futtat át a szoftverünkön. Ebből a queue-ból szeretnénk adott elemeket feldolgozni. Ügyesen implementáltuk az elvárt működést, de azt vesszük észre, hogy a programunk memóriaigénye irreális módon megnövekedett.
+
+Elindítjuk a memória-diagnózist, és azt látjuk, hogy a heap-ünkön megjelenik tömény\-telen mennyiségű String objektum, amiket előállítottunk a beolvasás-feldolgozás során. Ez hatványozottan igaz, ha esetleg JSON parseolást használtunk. A Garbage Collector dolgozik, de a gc.collect() lefutása nagyban függ attól, hogy a message-queue milyen tempóban küldi az üzeneteket, speciálisan: rengeteg üzenet beérkezik, de mielőtt elérné a collect thresholdot a memória, azelőtt a queue elkezd lassulni. Ennek okán a memóriában sok ideig lefoglaltan marad olyan cím, amit már nem fogunk használni. A diagnózis végére azt vesszük észre, hogy a program memóriaigényének a 90\%-át valamilyen JSON és String objektumok teszik ki.
+
+Röviden: a programunk való\-szí\-nű\-leg sok sebből vérzik, nem használtunk String Pooling-ot, esetleg olyan okból fogva, hogy a String Builder implementációnk minden alkalommal egy String objektumot hozott létre, akkor is, ha már korábban használt elemek kon\-ka\-te\-nált\-járól van szó.
+
+\subsubsection{Számítanak-e ezek?}
+\noindent
+
+Nyilván mondhatjuk, hogy ezek nem számítanak, hiszen a hardvergyártás már régen meghaladta azt a szintet, amelyen szükséges, hogy minden egyes byte-ot hiperoptimalizáljunk. Ezzel a mondattal nehéz vitatkozni. A hardvergyártás valóban elképesztő mértékben fejlődött az elmúlt évtizedekben. Ennek nyomán a fejlesztők egyre kevésbé vannak rákényszerülve arra, hogy optimális kódot írjanak.
+
+Ez nem azt jelenti, hogy semmilyen kódot nem kell optimálisan írni, csupán azt, hogy van, amit nem szükséges.
+Egy operációs rendszer esetén fokozottan kiemelt az erőforrások optimális kezelése és a gyorsaság. A Linux kernel nem véletlenül nem tartalmaz Java/C\# kódot. Egy kvantitatív kereskedőprogram, ahol a másodperc töredéke is számít, nem Pythonban fog készülni.
+
+\bigskip
+Ugyanakkor van rengeteg alkalmazása a szoftvernek, ahol a hardvereink miatt már egyáltalán nem kell foglalkoznunk a hatékonysággal. Belső céges webapp/desktop toolok, ERP-ek, scraperek, stb., mind olyan esetek, ahol az optimalizáció sokadrangú szempont
+
+\bigskip
+Tehát az OOP hátrányai nem minden esetben jelentenek problémát, csupán ismerni kell, hogy mikor érdemes alkalmazni.
+
+\subsection{Az OOP előnyei}
+\noindent
+
+A szoftver nem egy vákuumban létező dolog. A szoftver egy termék vagy egy szolgáltatás. Egy projektnél lehet, hogy sokkal fontosabb a fenntarthatóság és a gyors kivitelezés, két olyan princípium, amelyet az OOP helyes alkalmazása segít.
+
+
+\subsection{Az OOP miértje}
+\lipsum[1][1-2]
