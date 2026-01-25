@@ -3,6 +3,7 @@
 
 % Required packages
 \RequirePackage{pgf-umlcd}
+\usetikzlibrary{positioning}
 \RequirePackage[outputdir=bin]{minted}
 \RequirePackage{xcolor}
 \RequirePackage{tcolorbox}
@@ -38,5 +39,39 @@ minimum height=1cm, node distance=2cm]
 \setminted[csharp]{bgcolor=jbbg, fontfamily=zi4, fontsize=\footnotesize}
 
 \newcommand{\code}[1]{\textbf{\texttt{\color{inline}#1}}}
+
+% Type specification diagram styles
+\definecolor{typeboxbg}{RGB}{255,255,204}
+\definecolor{typetitle}{RGB}{0,128,64}
+
+\tikzset{
+    typebox/.style={draw, fill=typeboxbg, minimum width=2.8cm, minimum height=0.8cm, font=\small},
+    typelabel/.style={draw, fill=green!10, rounded corners, font=\footnotesize, text width=3cm, align=center},
+    typetitle/.style={draw, fill=white, font=\small\bfseries, text=typetitle}
+}
+
+\newenvironment{typespec}{%
+    \begin{tikzpicture}[every node/.style={inner sep=4pt}]
+}{%
+    \end{tikzpicture}%
+}
+
+\newcommand{\typespecdiagram}{%
+\begin{typespec}
+    % Center boxes (2x2 grid)
+    \node[typebox] (tv) at (0,0) {típusértékek};
+    \node[typebox] (tm) at (3,0) {típusműveletek};
+    \node[typebox] (tr) at (0,-1) {típus-reprezentáció};
+    \node[typebox] (ti) at (3,-1) {típus-implementáció};
+    % Title boxes
+    \node[typetitle] at (1.5,0.8) {Típus-specifikáció};
+    \node[typetitle] at (1.5,-1.8) {Típus-megvalósítás};
+    % Annotation labels
+    \node[typelabel, left=0.5cm of tv, anchor=east] {a típussal jellemzett adat lehetséges értékei};
+    \node[typelabel, right=0.5cm of tm, anchor=west] {típusértékekkel kapcsolatos feladatok};
+    \node[typelabel, left=0.5cm of tr, anchor=east] {típusértéket helyettesítő elemek, és azok értékeit korlátozó invariáns};
+    \node[typelabel, right=0.5cm of ti, anchor=west] {a típusműveleteket megoldó programok, amelyekben a típusértékek helyett azok reprezentánsai állnak};
+\end{typespec}%
+}
 
 \endinput

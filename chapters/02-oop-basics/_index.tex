@@ -1,5 +1,20 @@
 \section{Az objektumelvű programozás (OOP) alapjai}
 
+\subsection{Az absztrakció}
+\noindent
+
+Az absztrakció a programozás megkerülhetetlen eleme. Amikor egy programozási nyelvet használunk, akkor rengeteg absztrakcióval találkozunk, amit a szoftverek a hardver és a fejlesztő között felhúznak. Bizonyos szempontból még a modern szemlélettel alacsony szintűként (low-level) kategorizált C nyelv is magasszintűnek tekinthető, ha azt vesszük figyelembe mennyi belső működést maszkol emberileg fogyaszthatóbb formára. A számítástechnika korai éveiben (amely korszakból rengeteg mai zsargon származik) a lyukkártyás/szalagos megoldás volt a fejlesztő és a hardver közötti közös interfész. Ez rendkívül monoton, folyton ismétlődő és körülményes munkavégzést eredményezett. Az igények úgy alakították a világunkat, hogy szükség volt eszközökre amik felgyorsítják a fejlesztési folyamatot.
+
+Egy ma is erős relevanciával bíró példák az első absztrakciós rétegekre az Assembly nyelvek. Az Assembly hihetetlenül felgyorsította a fejlesztést, emberileg olvasható utasításokat fordított át gép által értelmezhető utasításokra. Innentől nem bitsorozatokban kellett gondolkodni, hanem regiszterekben és műveletekben. Mai fejjel nem az jutna eszünkbe az Assembly-ről, hogy kifejezetten gyors fejlesztési folyamattal jár, de érdemes észben tartani, hogy a kor applikációi lényegesen egyszerűbbek voltak.
+
+A következő nagy ugrásnak a magasszintű programnyelveket tekinthetjük. Korunkbeli relevanciája miatt legyen a C nyelv az alanyunk. Az Assemblyhez képest több absztrakció, ezáltal több kényelmi funkció érkezett. Nem kell regiszterekben gondolkodnunk, hanem folytonos, fentről lefele olvasható kódot írunk. Definiálhatunk változókat, függvényeket, tömböket, ezek mellett rengeteg olyan funkció is érkezik a nyelvekbe, amiket borzasztó nehéz lenne regiszterutasításokból felépíteni, például konkurens programozás (concurrency). A megoldásainkat procedúrákba szervezzük.
+
+Ezen a ponton meg is érkezünk ahhoz a környezethez, ami az Objektumelvű Programozás igényét megszülte. Bár a procedurális nyelvek rengeteg időt spórolnak a fejlesztőknek, a C nyelv eszközei az adatok szoros összekapcsolására (struct, union) illetve a kódszervezésre nem bizonyultak minden esetben hatékonynak. Klasszikus példa erre az alábbi kódrészlet:
+
+TODO
+
+Több kérdés is felmerülhet, például az, hogy milyen opcióink vannak, ha VIP fiókot is implementálni szeretnénk. Legyen egy \code{int accountType} része a structnak? Nem nehéz végiggondolni, hogy ez nehézségekhez vezethet egy olyan ember számára, aki most olvassa először a kódot. Továbbá, semmi állítja meg a programozót abban, hogy tetszőleges helyen a kódon belül beállítsa a fiókok pénzösszegét tetszőleges értékűre.
+
 \input{chapters/02-oop-basics/object}
 \input{chapters/02-oop-basics/class}
 \input{chapters/02-oop-basics/special-classes}
