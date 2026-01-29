@@ -1,1 +1,20 @@
 \subsection{Az osztály}
+\noindent
+
+Az adattípus fogalmának megismerése után ismerkedjünk meg az osztály fogalmával.
+
+\bigskip
+Az objektumelvű tervezés során osztályként adjuk meg az általunk definiált egyedi típusokat (custom type). Az osztály egy objektum szerkezetének és viselkedésének mintáját adja meg. Felsorolja az objektum \code{adattagjainak} nevét, típusát, láthatóságát, opcionálisan megadhatja az egyes adattagok típusinvariánsait, valamint megadja az objektumra meghív\-ható \code{metódusokat} névvel, paraméterekkel, visszatérési típussal, metódustesttel és látható\-ság\-gal ellátva.
+
+\paragraph{Láthatóság:}
+Az egyes adattagok és metódusok láthatósága azt mondja meg, hogy az adott objektum adattagját és metódusát milyen helyekről tudjuk elérni. A láthatóság megvalósítása eltér az objektumelvű nyelvek között.
+
+\bigskip
+Pythonból (és a legtöbb scriptnyelvből) ez a nyelvi elem például hiányzik, ezt konvenció szerint alsóvonásokkal pótolhatják a fejlesztők, azonban ezt a Python interpreter nem tartatja be szigorúan, kizárólag a fejlesztők egymás közötti kommunikációját szolgálja. Ezzel szemben Java-ban 4 láthatósági beállítás van (access modifier), C\#-ban 6-ot különböztetünk meg, ezek közül 3-at fogunk használni a félév során:
+
+\paragraph{Public:}
+Bárhonnan elérhető adattag és metódus. Jele: +.
+\paragraph{Private:}
+Csak osztályon belül elérhető adattag és metódus. Jele: -.
+\paragraph{Protected:}
+Csak osztályon belül, és leszármazottain (lásd: Öröklődés) belül elérhető adattag és metódus. Jele: \#.

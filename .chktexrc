@@ -2,4 +2,5 @@ VerbEnvir
 {
     csharpblock
     minted
+    code
 }
