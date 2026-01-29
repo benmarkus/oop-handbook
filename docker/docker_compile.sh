@@ -1,9 +1,11 @@
 #!/bin/bash
 
 OPEN_PDF=false
-while getopts "o" opt; do
+ONCE=false
+while getopts "o1" opt; do
     case $opt in
         o) OPEN_PDF=true ;;
+        1) ONCE=true ;;
     esac
 done
 
@@ -22,7 +24,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-docker run --rm -v "$(pwd):/doc" oep-latex pdflatex -shell-escape -synctex=1 -output-directory=bin -jobname=oop-handbook main.tex
+if [ "$ONCE" = false ]; then
+    docker run --rm -v "$(pwd):/doc" oep-latex pdflatex -shell-escape -synctex=1 -output-directory=bin -jobname=oop-handbook main.tex
+fi
 
 echo "Done: bin/oop-handbook.pdf"
 if $OPEN_PDF; then
